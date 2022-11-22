@@ -8,5 +8,8 @@
   "scripts": {
     "start": "wrangler dev",
     "deploy": "wrangler publish"
+  },
+  "dependencies": {
+    "jsdom": "^20.0.3"
   }
 }

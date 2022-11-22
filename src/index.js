@@ -8,8 +8,16 @@
  * Learn more at https://developers.cloudflare.com/workers/
  */
 
+import {RouteList} from './routes.js';
+
 export default {
-	async fetch(request, env, ctx) {
-		return new Response("Hello World!");
-	},
+    async fetch(request, env, ctx) {
+        const url = new URL(request.url);
+        for (const route of RouteList) {
+            if (url.pathname.startsWith(route.path)) {
+                return route.handler(request, env, ctx);
+            }
+        }
+        return new Response("Not found", {status: 404});
+    },
 };
