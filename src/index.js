@@ -14,7 +14,7 @@ export default {
     async fetch(request, env, ctx) {
         const url = new URL(request.url);
         for (const route of RouteList) {
-            if (url.pathname.startsWith(route.path)) {
+            if (url.pathname === route.path) {
                 return route.handler(request, env, ctx);
             }
         }

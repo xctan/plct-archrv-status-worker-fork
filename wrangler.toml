@@ -1,3 +1,4 @@
 name = "archrv-status"
 main = "src/index.js"
 compatibility_date = "2022-11-22"
+node_compat = true

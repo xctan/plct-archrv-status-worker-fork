@@ -10,6 +10,6 @@
     "deploy": "wrangler publish"
   },
   "dependencies": {
-    "jsdom": "^20.0.3"
+    "cheerio": "^1.0.0-rc.12"
   }
 }
