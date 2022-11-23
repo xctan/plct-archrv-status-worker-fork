@@ -210,7 +210,7 @@ export default generateHTML;
 
 const renderPackages = (pkgs) => {
     pkgs = pkgs.filter(pkg => {
-        if (pkg.felix === 'leaf' && !pkg.work.kind && pkg.mark.length === 0 && !pkg.user) {
+        if (pkg.felix !== 'dir' && !pkg.work.kind && !pkg.user) {
             return false;
         }
         // todo: apply search filter

@@ -46,6 +46,7 @@ const queries = {
                 }
                 let dep = $(cells[2]).text().match(re_dep);
                 if (dep) {
+                    pkgs[pkg_name].felix = 'dep';
                     pkgs[pkg_name].mark.push({
                         name: 'missing_dep',
                         by: { alias: 'null (felix)', },

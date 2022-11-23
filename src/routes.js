@@ -1,5 +1,6 @@
 import {fetchStatus} from "./subscribe";
-import generateHTML from "./render";
+import generateHTML from "./render_html";
+import renderPlain from "./render_plain";
 
 const RouteList = [
     {
@@ -29,16 +30,33 @@ const RouteList = [
 
                 // check query string
                 const url = new URL(request.url);
-                const format = url.searchParams.get('f');
-                if (format === 'json') {
-                    return new Response(JSON.stringify(pkgs), {
-                        headers: {'Content-Type': 'application/json'},
-                    });
-                } else {
-                    return new Response(generateHTML(pkgs, durations), {
-                        headers: {'Content-Type': 'text/html'},
-                    });
+                let format = url.searchParams.get('f');
+                if (!format) {
+                    // check ua
+                    const ua = request.headers.get('User-Agent');
+                    if (ua && ua.includes('Mozilla')) {
+                        format = 'html';
+                    } else {
+                        format = 'plain';
+                    }
                 }
+
+                switch (format) {
+                    case 'plain':
+                        return new Response(renderPlain(pkgs, durations), {
+                            headers: {'Content-Type': 'text/plain'},
+                        });
+                    case 'json':
+                        return new Response(JSON.stringify(pkgs), {
+                            headers: {'Content-Type': 'application/json'},
+                        });
+                    default:
+                    case 'html':
+                        return new Response(generateHTML(pkgs, durations), {
+                            headers: {'Content-Type': 'text/html'},
+                        });
+                }
+
             } catch (e) {
                 return new Response(e.message, {
                     status: 500,
