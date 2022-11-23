@@ -1,4 +1,5 @@
 import {fetchStatus} from "./subscribe";
+import generateHTML from "./render";
 
 const RouteList = [
     {
@@ -23,19 +24,24 @@ const RouteList = [
     {
         path: '/',
         handler: async (request, env, ctx) => {
-            const {pkgs} = await fetchStatus();
+            try {
+                const {pkgs, durations} = await fetchStatus();
 
-            // check query string
-            const url = new URL(request.url);
-            const format = url.searchParams.get('f');
-            if (format === 'json') {
-                return new Response(JSON.stringify(pkgs), {
-                    headers: {'Content-Type': 'application/json'},
-                });
-            } else {
-                // not finished yet
-                return new Response('Not finished yet', {
-                    status: 404,
+                // check query string
+                const url = new URL(request.url);
+                const format = url.searchParams.get('f');
+                if (format === 'json') {
+                    return new Response(JSON.stringify(pkgs), {
+                        headers: {'Content-Type': 'application/json'},
+                    });
+                } else {
+                    return new Response(generateHTML(pkgs, durations), {
+                        headers: {'Content-Type': 'text/html'},
+                    });
+                }
+            } catch (e) {
+                return new Response(e.message, {
+                    status: 500,
                 });
             }
         }

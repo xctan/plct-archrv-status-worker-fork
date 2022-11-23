@@ -9,7 +9,7 @@ const PackageInfo = name => {
         user: null, // user who owns this package
         work: {
             kind: '',
-            pr: '',
+            pr: null,
         },
         mark: [],
     }
@@ -56,7 +56,7 @@ const queries = {
                     pkgs[pkg_name].mark.push('legacy');
                 }
 
-                let patched = $(cells[2]).find('span.badge.secondary');
+                let patched = $(cells[2]).find('span.badge.bg-secondary');
                 if (patched.length > 0) {
                     pkgs[pkg_name].mark.push('patched');
                 }
@@ -85,15 +85,7 @@ const queries = {
                     continue;
                 }
                 pkgs[pkg.name] = pkgs[pkg.name] || PackageInfo(pkg.name);
-                pkgs[pkg.name].mark.push(...pkg.marks.map(mark => {
-                    return {
-                        kind: mark.name,
-                        msg: {
-                            by: mark.by.alias || '',
-                            comment: mark.comment || '',
-                        }
-                    };
-                }));
+                pkgs[pkg.name].mark.push(...pkg.marks);
             }
             return pkgs;
         }
