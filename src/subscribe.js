@@ -24,6 +24,11 @@ const queries = {
         },
         parser: async (pkgs, resp) => {
             const $ = cheerio.load(await resp.text());
+
+            const re = /Leaf package|Changes/;
+            const re_paren = /[()]/g;
+            const re_dep = /Dependency '(.*)' not satisfied\./;
+
             for (const row of $('tr')) {
                 const cells = $(row).find('td');
                 const pkg_name = $(cells[1]).text();
@@ -34,10 +39,18 @@ const queries = {
 
                 pkgs[pkg_name] = pkgs[pkg_name] || PackageInfo(pkg_name);
 
-                if ($(cells[2]).text().search('FTBFS') !== -1) {
-                    pkgs[pkg_name].felix = 'dir';
-                } else {
+                if ($(cells[2]).text().search(re) !== -1) {
                     pkgs[pkg_name].felix = 'leaf';
+                } else {
+                    pkgs[pkg_name].felix = 'dir';
+                }
+                let dep = $(cells[2]).text().match(re_dep);
+                if (dep) {
+                    pkgs[pkg_name].mark.push({
+                        name: 'missing_dep',
+                        by: { alias: 'null (felix)', },
+                        comment: dep[1],
+                    });
                 }
 
                 let triage = $(cells[2]).find('span.badge.bg-danger');
@@ -45,7 +58,7 @@ const queries = {
                     let reason = triage
                         .text()
                         .trim()
-                        .replaceAll(/[()]/g, '')
+                        .replaceAll(re_paren, '')
                         .replaceAll(' ', '-')
                         .toLowerCase();
                     pkgs[pkg_name].mark.push(`triage-${reason}`);
