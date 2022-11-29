@@ -272,7 +272,7 @@ const wrapExternalLink = (url, inner) => `<a href="${url}" target="_blank">${inn
 const renderTabName = (pkg) => {
     let name = pkg.name;
     if (pkg.felix === 'dir') {
-        name = wrapExternalLink(`https://archriscv.felixc.at/.status/logs/${pkg.name}/`, name);
+        name = wrapExternalLink(`https://archriscv.felixc.at/.status/logs/${pkg.base || pkg.name}/`, name);
     } else if (pkg.work.kind === 'prrm') {
         name = `<del>${name}</del>`;
     }
@@ -304,7 +304,7 @@ const renderTabName = (pkg) => {
             })
             .join(' ');
 
-    let arch_link = wrapExternalLink(`https://archlinux.org/packages/?q=${pkg.name}`, '[A]');
+    let arch_link = wrapExternalLink(`https://archlinux.org/packages/?q=${pkg.base || pkg.name}`, '[A]');
 
     return `${arch_link} | ${name} ${tags}`;
 }

@@ -5,6 +5,7 @@ const FetchUA='ArchRVStatusObserver PLCT::ArchRV.StatusWorker';
 const PackageInfo = name => {
     return {
         name,
+        base: null,
         felix: '', // 'dir' for problematic packages, and 'leaf' for normal packages
         user: null, // user who owns this package
         work: {
@@ -28,6 +29,7 @@ const queries = {
             const re = /Leaf package|Changes/;
             const re_paren = /[()]/g;
             const re_dep = /Dependency '(.*)' not satisfied\./;
+            const re_base = /.* \((.*)\)/;
 
             for (const row of $('tr')) {
                 const cells = $(row).find('td');
@@ -38,6 +40,11 @@ const queries = {
                 }
 
                 pkgs[pkg_name] = pkgs[pkg_name] || PackageInfo(pkg_name);
+
+                let base = $(cells[1]).text().match(re_base);
+                if (base) {
+                    pkgs[pkg_name].base = base[1];
+                }
 
                 if ($(cells[2]).text().search(re) !== -1) {
                     pkgs[pkg_name].felix = 'leaf';
