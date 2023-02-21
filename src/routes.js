@@ -1,4 +1,4 @@
-import {fetchStatus} from "./subscribe";
+import {fetchStatus, fetchRawStatus} from "./subscribe";
 import generateHTML from "./render_html";
 import renderPlain from "./render_plain";
 
@@ -23,7 +23,7 @@ const RouteList = [
         }
     },
     {
-        path: '/',
+        path: '/static',
         handler: async (request, env, ctx) => {
             try {
                 const {pkgs, durations} = await fetchStatus();
@@ -61,6 +61,61 @@ const RouteList = [
                 return new Response(e.message, {
                     status: 500,
                 });
+            }
+        }
+    },
+    {
+        path: '/raw',
+        handler: async (request, env, ctx) => {
+            const allowed_host = /127\.0\.0\.1|archrv/g;
+            let cors_headers = {
+                'Access-Control-Allow-Origin': '*',
+                'Access-Control-Allow-Methods': 'GET'
+            };
+
+            // intercept OPTION
+            if (request.method === 'OPTION') {
+                return new Response(null, {
+                    status: 204,
+                    headers: {
+                        ...cors_headers
+                    }
+                })
+            }
+            try {
+                const raw_source = await fetchRawStatus();
+                return new Response(JSON.stringify(raw_source), {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...cors_headers
+                    },
+                });
+            } catch (e) {
+                return new Response(e.message, {
+                    status: 500,
+                });
+            }
+        }
+    },
+    {
+        path: '/',
+        handler: async (request, env, ctx) => {
+            const ua = request.headers.get('User-Agent');
+            if (ua && ua.includes('Mozilla')) {
+                // leave rendering job to the client
+                return new Response('Moved', {
+                    status: 302,
+                    headers: {
+                        'Location': 'https://archrv-dash.pages.dev/'
+                    }
+                });
+            } else {
+                return new Response('', {
+                    status: 302,
+                    headers: {
+                        'Location': '/static',
+                    }
+                })
             }
         }
     }

@@ -113,7 +113,7 @@ const queries = {
     }
 }
 
-const fetchStatus = async () => {
+const dispatchRequests = () => {
     const start = Date.now();
     let requests = {};
     for (const [name, query] of Object.entries(queries)) {
@@ -125,6 +125,12 @@ const fetchStatus = async () => {
                 }
             });
     }
+
+    return requests;
+}
+
+const fetchStatus = async () => {
+    let requests = dispatchRequests();
 
     let pkgs = {};
     let durations = {};
@@ -143,4 +149,24 @@ const fetchStatus = async () => {
     }
 }
 
-export {fetchStatus};
+const fetchRawStatus = async () => {
+    let requests = dispatchRequests();
+
+    let source = {};
+    let durations = {};
+    for (const [name, request] of Object.entries(requests)) {
+        const {resp, duration} = await request;
+        if (!resp.ok) {
+            throw new Error(`Failed to fetch ${name}: ${resp.status} ${resp.statusText}`);
+        }
+        source[name] = await resp.text();
+        durations[name] = duration;
+    }
+
+    return {
+        source,
+        durations,
+    }
+}
+
+export {fetchStatus, fetchRawStatus};
