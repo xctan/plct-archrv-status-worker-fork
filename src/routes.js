@@ -106,7 +106,8 @@ const RouteList = [
                 return new Response('Moved', {
                     status: 302,
                     headers: {
-                        'Location': 'https://archrv-dash.pages.dev/'
+                        // 'Location': 'https://archrv-dash.pages.dev/'
+                        'Location': '/static',
                     }
                 });
             } else {

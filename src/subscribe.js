@@ -87,7 +87,7 @@ const queries = {
         }
     },
     'MelonBot': {
-        url: 'https://plct-arv.de2670dd.top/pkg',
+        url: 'https://plct-arv.jiejiss.com/pkg',
         init: {
             method: 'GET',
             headers: {'User-Agent': FetchUA},

@@ -64,6 +64,10 @@ const generateHTML = (pkgs, durations) => {
         span.subreqtime {
           font-size: 0.8em;
         }
+        span.lonely-package {
+          font-style: italic;
+          color: rgba(0, 0, 0, 0.05);
+        }
         tr.expand {
           font-size: 0.8em;
         }
@@ -198,7 +202,7 @@ const generateHTML = (pkgs, durations) => {
                 <tr>
                     <th scope="col">name</th>
                     <th scope="col">user</th>
-                    <th scope="col">work</th>
+                    <!-- <th scope="col">work</th> -->
                     <th scope="col">mark</th>
                 </tr>
             </thead>
@@ -226,8 +230,8 @@ const renderPackages = (pkgs) => {
 
     const tabs = [
         renderTabName,
-        (pkg) => pkg.user || `<em>**nobody**</em>`,
-        renderTabWork,
+        (pkg) => pkg.user || `<span class="lonely-package">nobody</span>`,
+        // renderTabWork,
         renderTabMark,
     ]
 
